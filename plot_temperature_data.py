@@ -1,13 +1,13 @@
 """Python script for plotting temperature monitoring data
 Example usage:
-python plot_temperature_data.py data/260129-0204.log data/260206-08.log -o data/odtemp-260206-08.log data/odtemp-260208-1912.log
+python plot_temperature_data.py data/260129-0201.log data/260206-0213.log -o data/odtemp-260206-0208.log data/odtemp-260208.log data/odtemp-260210-0213.log
 """
 
 from datetime import timedelta
 from argparse import ArgumentParser
 
-import matplotlib.pyplot as plt
 import pandas as pd
+import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from matplotlib.ticker import MultipleLocator
 
@@ -22,7 +22,7 @@ args = parser.parse_args()
 
 FORMAT = "%d.%m.%Y %H:%M:%S"
 XMAJOR_LOCATOR = 1
-XMINOR_LOCATOR = 6
+XMINOR_LOCATOR = range(0, 24, 6)
 YMAJOR_LOCATOR = 1
 YMINOR_LOCATOR = 0.5
 MS = 7
@@ -80,7 +80,7 @@ plt.ylabel("Температура, °C", fontsize=12)
 plt.grid(True, linestyle="--", alpha=0.7)
 plt.tight_layout()
 td = timedelta(minutes=180)
-plt.xlim(min(xlims) - td, max(xlims) + 2*td)
+plt.xlim(min(xlims) - td, max(xlims) + 3.5*td)
 plt.ylim(ylims)
 plt.legend(loc="upper left")
 
@@ -88,7 +88,7 @@ ax.xaxis.set_major_locator(mdates.DayLocator(interval=XMAJOR_LOCATOR))
 date_form = mdates.DateFormatter("%d %H:%M")
 ax.xaxis.set_major_formatter(date_form)
 ax.minorticks_on()
-ax.xaxis.set_minor_locator(mdates.HourLocator(interval=XMINOR_LOCATOR))
+ax.xaxis.set_minor_locator(mdates.HourLocator(byhour=XMINOR_LOCATOR))
 ax.yaxis.set_major_locator(MultipleLocator(YMAJOR_LOCATOR))
 ax.yaxis.set_minor_locator(MultipleLocator(YMINOR_LOCATOR))
 ax.tick_params(which="major", length=3.5)
