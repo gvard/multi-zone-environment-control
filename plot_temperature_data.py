@@ -1,6 +1,6 @@
 """Python script for plotting temperature monitoring data
 Example usage:
-python plot_temperature_data.py data/260129-0201.log data/260206-0213.log -o data/odtemp-260206-0208.log data/odtemp-260208.log data/odtemp-260210-0213.log
+python plot_temperature_data.py data/260129-0201.log data/260206-0215.log -o data/odtemp-260206-0208.log data/odtemp-260208.log data/odtemp-260210-0213.log data/odtemp-260215.log
 """
 
 from datetime import timedelta
@@ -46,10 +46,15 @@ for i, nam in enumerate(args.filenames):
         datad = data[data["flag"] == "d"]
         plt.plot(datad["datetime"], datad["temp"], "og", lw=1, markeredgecolor="k", mew=0.5, ms=MS, zorder=7,
                  label="Показания термометра c фоторегистрацией")
+        datad = data[data["flag"] == "t"]
+        plt.plot(datad["datetime"], datad["temp"], "or", lw=1, markeredgecolor="k", mew=0.5, ms=MS, zorder=7,
+                 label="Показания термометра на высоте 2 м")
     else:
         plt.plot(data["datetime"], data["temp"], "ok", lw=1)
         datad = data[data["flag"] == "d"]
         plt.plot(datad["datetime"], datad["temp"], "og", lw=1, markeredgecolor="k", mew=0.5, ms=MS, zorder=7)
+        datad = data[data["flag"] == "t"]
+        plt.plot(datad["datetime"], datad["temp"], "or", lw=1, markeredgecolor="k", mew=0.5, ms=MS, zorder=7)
 
 columns = ["date", "time", "temp"]
 for i, nam in enumerate(args.odtfnames):
@@ -80,9 +85,12 @@ plt.ylabel("Температура, °C", fontsize=12)
 plt.grid(True, linestyle="--", alpha=0.7)
 plt.tight_layout()
 td = timedelta(minutes=180)
-plt.xlim(min(xlims) - td, max(xlims) + 3.5*td)
+xlims = min(xlims) - td, max(xlims) + 3.5*td
+plt.xlim(xlims)
 plt.ylim(ylims)
 plt.legend(loc="upper left")
+plt.plot(xlims, [15, 15], "--r", lw=1, zorder=-5)
+plt.plot(xlims, [18, 18], "--r", lw=1, zorder=-5)
 
 ax.xaxis.set_major_locator(mdates.DayLocator(interval=XMAJOR_LOCATOR))
 date_form = mdates.DateFormatter("%d %H:%M")
