@@ -1,6 +1,6 @@
 """Python script for plotting temperature monitoring data
 Example usage:
-python plot_temperature_data.py data/260129-0201.log data/260206-0215.log -o data/odtemp-260206-0208.log data/odtemp-260208.log data/odtemp-260210-0213.log data/odtemp-260215.log
+python plot_temperature_data.py data/260129-0201.log data/260206-0222.log -o data/odtemp-260206-0208.log data/odtemp-260208.log data/odtemp-260210-0213.log data/odtemp-260215.log data/odtemp-260222.log
 """
 
 from datetime import timedelta
@@ -80,12 +80,12 @@ while current_date <= max(xlims) + day:
         current_date += day
 
 plt.title("Измерения температуры в помещении")
-plt.xlabel("Время, ДД ЧЧ:ММ", fontsize=12)
+plt.xlabel("Время, ДД.ММ", fontsize=12)
 plt.ylabel("Температура, °C", fontsize=12)
 plt.grid(True, linestyle="--", alpha=0.7)
 plt.tight_layout()
 td = timedelta(minutes=180)
-xlims = min(xlims) - td, max(xlims) + 3.5*td
+xlims = min(xlims) - td, max(xlims) + 2.5*td
 plt.xlim(xlims)
 plt.ylim(ylims)
 plt.legend(loc="upper left")
@@ -93,7 +93,7 @@ plt.plot(xlims, [15, 15], "--r", lw=1, zorder=-5)
 plt.plot(xlims, [18, 18], "--r", lw=1, zorder=-5)
 
 ax.xaxis.set_major_locator(mdates.DayLocator(interval=XMAJOR_LOCATOR))
-date_form = mdates.DateFormatter("%d %H:%M")
+date_form = mdates.DateFormatter("%d.%m")  #  %H:%M
 ax.xaxis.set_major_formatter(date_form)
 ax.minorticks_on()
 ax.xaxis.set_minor_locator(mdates.HourLocator(byhour=XMINOR_LOCATOR))
