@@ -1,6 +1,6 @@
 """Python script for plotting temperature monitoring data
 Example usage:
-python plot_temperature_data.py data/260129-0201.log data/260206-0222.log -o data/odtemp-260206-0208.log data/odtemp-260208.log data/odtemp-260210-0213.log data/odtemp-260215.log data/odtemp-260222.log
+python plot_temperature_data.py data/260129-0201.log data/260206-0228.log data/2603.log -o data/odtemp-260206-0208.log data/odtemp-260208.log data/odtemp-260210-0213.log data/odtemp-260215.log data/odtemp-260222.log data/odtemp-260227.log data/odtemp-260228.log data/odtemp-260301.log data/odtemp-260306.log
 """
 
 from datetime import timedelta
