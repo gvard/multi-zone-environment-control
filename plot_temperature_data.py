@@ -1,6 +1,6 @@
 """Python script for plotting temperature monitoring data
 Example usage:
-python plot_temperature_data.py data/260129-0201.log data/260206-0228.log data/2603.log -o data/odtemp-260206-0208.log data/odtemp-260208.log data/odtemp-260210-0213.log data/odtemp-260215.log data/odtemp-260222.log data/odtemp-260227.log data/odtemp-260228.log data/odtemp-260301.log data/odtemp-260306.log
+python plot_temperature_data.py 260129-0201.log 260206-0228.log 2603.log -o odtemp-260206-0208.log odtemp-260208.log odtemp-260210-0213.log odtemp-260215.log odtemp-260222.log odtemp-260227-0228.log odtemp-260301.log odtemp-260306.log odtemp-260313.log odtemp-260322.log
 """
 
 from datetime import timedelta
@@ -20,8 +20,9 @@ parser.add_argument("-o", "--odtfnames", nargs="+", metavar="ODTFILES",
                     help="input CSV data file(s)")
 args = parser.parse_args()
 
+DATA_DIR = "data/"
 FORMAT = "%d.%m.%Y %H:%M:%S"
-XMAJOR_LOCATOR = 1
+XMAJOR_LOCATOR = 2
 XMINOR_LOCATOR = range(0, 24, 6)
 YMAJOR_LOCATOR = 1
 YMINOR_LOCATOR = 0.5
@@ -35,7 +36,7 @@ extremes = []
 fig, ax = plt.subplots(figsize=(16, 9))
 
 for i, nam in enumerate(args.filenames):
-    data = pd.read_csv(nam, header=0, names=columns)
+    data = pd.read_csv(DATA_DIR + nam, header=0, names=columns)
     data["datetime"] = pd.to_datetime(data["date"] + " " + data["time"], format=FORMAT)
     xlims.append(data["datetime"].iloc[0])
     xlims.append(data["datetime"].iloc[-1])
@@ -58,7 +59,7 @@ for i, nam in enumerate(args.filenames):
 
 columns = ["date", "time", "temp"]
 for i, nam in enumerate(args.odtfnames):
-    data = pd.read_csv(nam, header=0, names=columns)
+    data = pd.read_csv(DATA_DIR + nam, header=0, names=columns)
     data["datetime"] = pd.to_datetime(data["date"] + " " + data["time"], format=FORMAT)
     xlims.append(data["datetime"].iloc[0])
     xlims.append(data["datetime"].iloc[-1])
@@ -85,7 +86,7 @@ plt.ylabel("Температура, °C", fontsize=12)
 plt.grid(True, linestyle="--", alpha=0.7)
 plt.tight_layout()
 td = timedelta(minutes=180)
-xlims = min(xlims) - td, max(xlims) + 2.5*td
+xlims = min(xlims) - td, max(xlims) + 3.7*td
 plt.xlim(xlims)
 plt.ylim(ylims)
 plt.legend(loc="upper left")
