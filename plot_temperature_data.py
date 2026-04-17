@@ -1,6 +1,6 @@
 """Python script for plotting temperature monitoring data
 Example usage:
-python plot_temperature_data.py 260129-0201.log 260206-0228.log 2603.log -o odtemp-260206-0208.log odtemp-260208.log odtemp-260210-0213.log odtemp-260215.log odtemp-260222.log odtemp-260227-0228.log odtemp-260301.log odtemp-260306.log odtemp-260313.log odtemp-260322.log
+python plot_temperature_data.py 260129-0201.log 260206-0228.log 2603.log 2604.log -l odtemp-datafiles.txt
 """
 
 from datetime import timedelta
@@ -18,12 +18,14 @@ parser.add_argument("filenames", nargs="+", metavar="FILES",
                     help="input CSV data file(s)")
 parser.add_argument("-o", "--odtfnames", nargs="+", metavar="ODTFILES",
                     help="input CSV data file(s)")
+parser.add_argument("-l", "--odtlist", default="", metavar="ODTLIST",
+                    help="file with list of input CSV data files")
 args = parser.parse_args()
 
 DATA_DIR = "data/"
 FORMAT = "%d.%m.%Y %H:%M:%S"
-XMAJOR_LOCATOR = 2
-XMINOR_LOCATOR = range(0, 24, 6)
+XMAJOR_LOCATOR = 3
+XMINOR_LOCATOR = range(0, 24, 12)
 YMAJOR_LOCATOR = 1
 YMINOR_LOCATOR = 0.5
 MS = 7
@@ -58,7 +60,13 @@ for i, nam in enumerate(args.filenames):
         plt.plot(datad["datetime"], datad["temp"], "or", lw=1, markeredgecolor="k", mew=0.5, ms=MS, zorder=7)
 
 columns = ["date", "time", "temp"]
-for i, nam in enumerate(args.odtfnames):
+if args.odtlist:
+    files = pd.read_csv(DATA_DIR + args.odtlist, header=None, names=['filenames'])
+    filenames_list = files['filenames'].tolist()
+else:
+    filenames_list = args.odtfnames
+    
+for i, nam in enumerate(filenames_list):
     data = pd.read_csv(DATA_DIR + nam, header=0, names=columns)
     data["datetime"] = pd.to_datetime(data["date"] + " " + data["time"], format=FORMAT)
     xlims.append(data["datetime"].iloc[0])
@@ -72,7 +80,7 @@ for i, nam in enumerate(args.odtfnames):
         plt.plot(data["datetime"], data["temp"], "-o", lw=1, color="blue", markeredgecolor="k", mew=0.5, ms=MS)
 
 temp_delta = 0.3
-ylims = (min(extremes) - temp_delta, max(extremes) + temp_delta)
+ylims = (min(extremes) - temp_delta/3, min(max(extremes), 25.1) + temp_delta)
 
 current_date = min(xlims).replace(hour=0, minute=0, second=0)
 day = timedelta(days=1)
@@ -86,7 +94,7 @@ plt.ylabel("Температура, °C", fontsize=12)
 plt.grid(True, linestyle="--", alpha=0.7)
 plt.tight_layout()
 td = timedelta(minutes=180)
-xlims = min(xlims) - td, max(xlims) + 3.7*td
+xlims = min(xlims) - td, max(xlims) + 2.7*td
 plt.xlim(xlims)
 plt.ylim(ylims)
 plt.legend(loc="upper left")
